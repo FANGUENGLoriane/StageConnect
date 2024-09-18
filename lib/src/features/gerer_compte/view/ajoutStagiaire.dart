@@ -109,7 +109,7 @@ class _ajouStagiaireState extends State<ajouStagiaire> {
                 height: 18,
               ),
               SizedBox(
-                  width: 360,
+                  width: 335,
                   child: Form(
                       key: formkey,
                       child: Column(children: [

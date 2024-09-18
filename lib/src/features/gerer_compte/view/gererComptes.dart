@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:premierepage/filepage.dart';
+import 'package:premierepage/src/constant/images.dart';
 import 'package:premierepage/src/features/gerer_compte/view/ajoutEncadrant.dart';
 import 'package:premierepage/src/features/gerer_compte/view/ajoutStagiaire.dart';
 
@@ -12,8 +13,11 @@ class GererComptes extends StatefulWidget {
 }
 
 class _GererComptesState extends State<GererComptes> {
+  late Color myColor;
   @override
   Widget build(BuildContext context) {
+    myColor = Theme.of(context).primaryColor;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
         home: DefaultTabController(
@@ -43,34 +47,43 @@ class _GererComptesState extends State<GererComptes> {
                 body: TabBarView(
                   children: [
                      Card(
-                        child: Column(
-                          children: [
-
+                      child:
+                            Stack(
+                        children: [
+                            Container(
+                            decoration: BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: AssetImage(logo_stage),
+                                colorFilter: ColorFilter.mode(
+                                    myColor.withOpacity(0.1), BlendMode.dstATop)
+                            ))),
                            Padding(
-                             padding: EdgeInsets.symmetric( horizontal: 30,vertical: 20),
+                             padding: EdgeInsets.symmetric( horizontal: 30,vertical: 25),
                              child:
                                  GestureDetector(
                                    onTap: (){
                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ajouStagiaire()));
                                    },
-                               child: Text('Ajouter Stagiaire',style: TextStyle(fontSize: 35,color: Colors.black),),
+                               child: Text('Ajouter Stagiaire',style: TextStyle(fontSize: 25,color: Colors.black),),
                              ),),
-                            SizedBox(height: 18,),
-                            Divider(height: 25,color: Colors.deepOrangeAccent,),
-                            Divider(height: 25,color: Colors.deepOrangeAccent,),
-                            SizedBox(height: 18,),
+        Divider(height: 10,),
+
+        Padding(
+            padding: EdgeInsets.symmetric( horizontal: 30,vertical: 100),
+                           child:
                             GestureDetector(
                               onTap: (){
                                 Navigator.push(context, MaterialPageRoute(builder: (context)=> ajoutEncadrant()));
                               },
                               child:
-                            Text('Enregistrer Encadrant',style: TextStyle(fontSize: 35,color: Colors.black),),
+                            Text('Enregistrer Encadrant',style: TextStyle(fontSize: 25,color: Colors.black),),
 
                             ),
-                            SizedBox(height: 18,),
-                            Divider(height: 25,color: Colors.deepOrangeAccent,),
-                          ],
-                        )),
+        ),
+                          Divider(height: 160,),
+                          Divider(height: 320,),
+                        ] )),
 
                     Card(
                         child: Text('Gerer demandes')),

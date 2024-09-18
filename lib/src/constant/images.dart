@@ -5,6 +5,8 @@ const ordi8 = "assets/image/ordi8.jpg";
 const comptia = "assets/image/Comptia.jpg";
 const eccouncil = "assets/image/eccouncil.png";
 const microsoft= "assets/image/microsoft.jpeg";
+const logo_stage= "assets/image/logoperso1.png";
+
 const cisco1 = "assets/image/Cisco1.jpg";
 const formation= "assets/image/formation.jpg";
 const person = "assets/image/IA.webp";

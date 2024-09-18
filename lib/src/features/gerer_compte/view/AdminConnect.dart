@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:premierepage/gererComptes.dart';
+import 'package:premierepage/src/features/gerer_compte/view/gererComptes.dart';
 
 class AdminConnect extends StatefulWidget {
   const AdminConnect({super.key});
@@ -43,8 +43,7 @@ class _AdminConnectState extends State<AdminConnect> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-
-                child: ListView(
+            child: ListView(
       children: [
         Image.asset('image/main.JPG'),
         const SizedBox(height: 40, width: 5),
@@ -67,7 +66,8 @@ class _AdminConnectState extends State<AdminConnect> {
                       decoration: const InputDecoration(
                         // ce que contiendra le input
                         labelText: 'NOM', // label du input
-                        hintText: 'entrez votre nom', // un symonyme de placehoder
+                        hintText:
+                            'entrez votre nom', // un symonyme de placehoder
                         prefixIcon: Icon(Icons.person), // icon du user
                         border: OutlineInputBorder(),
                       ),
@@ -94,7 +94,8 @@ class _AdminConnectState extends State<AdminConnect> {
                       decoration: const InputDecoration(
                         // ce que contiendra le input
                         labelText: 'PASSWORD', // label du input
-                        hintText: 'Votre mot de passe', // un symonyme de placehoder
+                        hintText:
+                            'Votre mot de passe', // un symonyme de placehoder
                         prefixIcon: Icon(Icons.password), // icon password
                         border: OutlineInputBorder(),
                       ),

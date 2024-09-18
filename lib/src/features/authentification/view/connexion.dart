@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:premierepage/main.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/nav_bar.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/specialite.dart';
 import 'package:premierepage/src/features/gerer_compte/view/gererComptes.dart';
+import 'package:premierepage/src/features/signup/views/suivant.dart';
 
 void main() {
   runApp(const connect());
@@ -12,7 +14,6 @@ void main() {
 
 class connect extends StatefulWidget {
   const connect({super.key});
-
   @override
   State<connect> createState() => _connectState();
 }
@@ -36,7 +37,6 @@ class _connectState extends State<connect> {
           MaterialPageRoute(
             builder: (context) => GererComptes(), // transmission des données
           ),
-
         );
       }
     }
@@ -161,31 +161,44 @@ class _connectState extends State<connect> {
                         SizedBox(
                             width: 150,
                             child: ElevatedButton(
-                              onPressed:()
-                              async {
+                              onPressed: () async {
                                 _validateAndNavigate;
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            if (Formkey.currentState!.validate()) {
-                            String _email = emailController.text;
-                            String _mdp = passwordController.text;
-                            try {
-                              final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                                  email: _email,
-                                  password: _mdp,
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('connexion réussi')));
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>specialite(),
-                              ),
-                              );
-                            } on FirebaseAuthException catch (e) {
-                              if (e.code == 'invalid-credential') {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Email incorrect')));
-                              } else if (e.code == 'invalid-credential') {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('mot de passe érroné')));
-                              }
-                            }
-                            }
-                            },
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
+                                if (Formkey.currentState!.validate()) {
+                                  String _email = emailController.text;
+                                  String _mdp = passwordController.text;
+                                  try {
+                                    final credential = await FirebaseAuth
+                                        .instance
+                                        .signInWithEmailAndPassword(
+                                      email: _email,
+                                      password: _mdp,
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text('connexion réussi')));
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => specialite(),
+                                      ),
+                                    );
+                                  } on FirebaseAuthException catch (e) {
+                                    if (e.code == 'invalid-credential') {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content:
+                                                  Text('Email incorrect')));
+                                    } else if (e.code == 'invalid-credential') {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content:
+                                                  Text('mot de passe érroné')));
+                                    }
+                                  }
+                                }
+                              },
 
                               //   Navigator.push(context, MaterialPageRoute(builder: (context)=>navBar()));
                               /* final email1 = emailController.text;
@@ -207,31 +220,45 @@ class _connectState extends State<connect> {
                                   backgroundColor: Colors.deepOrangeAccent,
                                   minimumSize: const Size.fromHeight(40)),
                               child: const Text(
-                                'Login',
+                                'Connexion',
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 18),
                               ),
                             )),
-                       SizedBox(height: 10,),
-                       GestureDetector(
-                        onTap:  (){
-                          /*String emailAddress = "user@example.com";
-                          if (passwordController != null) {
-                            auth.SendPasswordResetEmailAsync(emailAddress).ContinueWith(task => {
-                            if (task.IsCanceled) {
-                            Debug.LogError("SendPasswordResetEmailAsync was canceled.");
-                            return;
-                            }
-                            if (task.IsFaulted) {
-                            Debug.LogError("SendPasswordResetEmailAsync encountered an error: " + task.Exception);
-                            return;
-                            }
-
-                            Debug.Log("Password reset email sent successfully.");
-                            });
-                          }*/
-                        }, child: Text('Mot de passe oublié ?')),
-                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        GestureDetector(
+                            onTap: () {}, child: Text('Mot de passe oublié ?')),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        SizedBox(
+                            width: 285,
+                            child: Row(
+                              children: [
+                                Text('vous n\'avez pas de compte?'),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Suivant()));
+                                  },
+                                  child: Text(
+                                    'inscrivez-vous',
+                                    style: GoogleFonts.roboto(
+                                        color: Colors.deepOrangeAccent),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 18,
+                                ),
+                              ],
+                            ))
                       ])))
             ])));
   }

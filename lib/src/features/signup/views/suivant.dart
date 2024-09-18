@@ -212,7 +212,7 @@ class _SuivantState extends State<Suivant> {
                                 }
 
                                 },
-                              child: const Text('Connexion',
+                              child: const Text('Inscription',
                                 style:
                                     TextStyle(color: Colors.white, fontSize: 20),
                               )),

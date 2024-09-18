@@ -1,7 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:premierepage/home.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/Soumission%20IA.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/SoumissionBD.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/SoumissionCyberSecurite.dart';
@@ -10,6 +9,7 @@ import 'package:premierepage/src/features/elaborer_demande/view/SoummissionComme
 import 'package:premierepage/src/features/elaborer_demande/view/dossier.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/info.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/soumission_dossier.dart';
+import 'package:premierepage/src/features/home/views/home.dart';
 
 const _mainColor = Colors.deepOrangeAccent;
 

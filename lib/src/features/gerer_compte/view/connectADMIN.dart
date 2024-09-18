@@ -1,45 +1,55 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:premierepage/filepage.dart';
 import 'package:premierepage/main.dart';
-
+import 'package:premierepage/src/features/elaborer_demande/view/nav_bar.dart';
+import 'package:premierepage/src/features/elaborer_demande/view/specialite.dart';
+import 'package:premierepage/src/features/gerer_compte/view/gererComptes.dart';
 
 void main() {
-  runApp(const ajoutEncadrant());
+  runApp(const connectADMIN());
 }
 
-class ajoutEncadrant extends StatefulWidget {
-  const ajoutEncadrant({super.key});
-
+class connectADMIN extends StatefulWidget {
+  const connectADMIN({super.key});
   @override
-  State<ajoutEncadrant> createState() => _ajoutEncadrantState();
+  State<connectADMIN> createState() => _connectADMINState();
 }
 
-class _ajoutEncadrantState extends State<ajoutEncadrant> {
+class _connectADMINState extends State<connectADMIN> {
   late Color myColor;
   late Size mediaSize;
   final Formkey = GlobalKey<FormState>();
-  final nomController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  @override
-  void dispose() {
-    super.dispose();
-    nomController.dispose();
-    passwordController.dispose();
+
+  final String predefinedEmail = "AD";
+  final String predefinedPassword = "A";
+  void _validateAndNavigate() {
+    if (Formkey.currentState!.validate()) {
+      //verifie si les entrées du user correspondent aux donnees prédéfinies
+      if (emailController.text == predefinedEmail &&
+          passwordController.text == predefinedPassword) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GererComptes(), // transmission des données
+          ),
+
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     mediaSize = MediaQuery.of(context).size;
-    myColor = Theme.of(context).primaryColor;
     return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              fit: BoxFit.cover,
-              image: const AssetImage('image/main.JPG'),
-              //COULEUR au dessus de l'image
-              colorFilter: ColorFilter.mode(
-                  myColor.withOpacity(0.4), BlendMode.dstATop))),
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              colors: [Colors.deepOrangeAccent, Colors.white],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight)),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(
@@ -81,7 +91,7 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
             child: Column(children: [
               SizedBox(height: 15),
               const Text(
-                'Enregistrer',
+                'CONNECTEZ-VOUS',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 29,
@@ -91,7 +101,7 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
                 height: 9,
               ),
               const Text(
-                'Encadrant',
+                'Veuillez remplir ces champs',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
@@ -101,20 +111,20 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
                 height: 32,
               ),
               SizedBox(
-                  width: 334,
+                  width: 338,
                   child: Form(
                       key: Formkey,
                       child: Column(children: [
                         TextFormField(
-                            controller: nomController,
-                            keyboardType: TextInputType.name,
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
                             decoration: const InputDecoration(
                                 label: Text(
-                                  'Nom',
+                                  'Email',
                                   style: TextStyle(fontSize: 20),
                                 ),
-                                hintText: 'veuillez entrer votre nom',
-                                prefixIcon: Icon(Icons.person_2),
+                                hintText: 'veuillez entrer votre adresse email',
+                                prefixIcon: Icon(Icons.email),
                                 border: OutlineInputBorder()),
                             onChanged: (String value) {},
                             validator: (value) {
@@ -150,13 +160,33 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
                         SizedBox(
                             width: 150,
                             child: ElevatedButton(
-                              onPressed:(){
-    if (Formkey.currentState!.validate()) {
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>FilesPag()));
-                              }
+                              onPressed:()
+                              async {
+                                _validateAndNavigate;
+                                FocusScope.of(context).requestFocus(FocusNode());
+                                if (Formkey.currentState!.validate()) {
+                                  String _email = emailController.text;
+                                  String _mdp = passwordController.text;
+                                  try {
+                                    final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                                      email: _email,
+                                      password: _mdp,
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('connexion réussi')));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>specialite(),
+                                    ),
+                                    );
+                                  } on FirebaseAuthException catch (e) {
+                                    if (e.code == 'invalid-credential') {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Email incorrect')));
+                                    } else if (e.code == 'invalid-credential') {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('mot de passe érroné')));
+                                    }
+                                  }
+                                }
                               },
 
-                              //
+                              //   Navigator.push(context, MaterialPageRoute(builder: (context)=>navBar()));
                               /* final email1 = emailController.text;
       final password1 = passwordController.text;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -176,12 +206,31 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
                                   backgroundColor: Colors.deepOrangeAccent,
                                   minimumSize: const Size.fromHeight(40)),
                               child: const Text(
-                                'Enregistrer',
+                                'Login',
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 18),
                               ),
                             )),
-                        SizedBox(height: 15)
+                        SizedBox(height: 10,),
+                        GestureDetector(
+                            onTap:  (){
+                              /*String emailAddress = "user@example.com";
+                          if (passwordController != null) {
+                            auth.SendPasswordResetEmailAsync(emailAddress).ContinueWith(task => {
+                            if (task.IsCanceled) {
+                            Debug.LogError("SendPasswordResetEmailAsync was canceled.");
+                            return;
+                            }
+                            if (task.IsFaulted) {
+                            Debug.LogError("SendPasswordResetEmailAsync encountered an error: " + task.Exception);
+                            return;
+                            }
+
+                            Debug.Log("Password reset email sent successfully.");
+                            });
+                          }*/
+                            }, child: Text('Mot de passe oublié ?')),
+                        SizedBox(height: 10,),
                       ])))
             ])));
   }
@@ -196,4 +245,3 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
              end: Alignment.bottomRight)
      ),
         )*/
-
