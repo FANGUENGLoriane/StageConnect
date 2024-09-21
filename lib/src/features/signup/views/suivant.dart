@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:premierepage/main.dart';
@@ -21,7 +22,9 @@ class Suivant extends StatefulWidget {
 class _SuivantState extends State<Suivant> {
   late Color myColor;
   late Size mediaSize;
+  late String userName;
   final formkey = GlobalKey<FormState>();
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController nomController = TextEditingController();
@@ -174,6 +177,7 @@ class _SuivantState extends State<Suivant> {
                                       ),
                                       hintText: 'veuillez entrer votre password',
                                       prefixIcon: Icon(Icons.password),
+
                                       border: OutlineInputBorder()),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -191,11 +195,19 @@ class _SuivantState extends State<Suivant> {
                                 if (formkey.currentState!.validate()) {
                                   String _email = emailController.text;
                                   String _mdp = passwordController.text;
+                                  String _nom = nomController.text;
                                   try {
-                                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                                   final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                                       email: _email,
                                       password: _mdp,
-                                    );
+                                   );
+                                    String? currentUid = credential.user?.uid;
+                                    //ajout a la bd
+                                   _firestore.collection('utilisateur').doc(currentUid).set({
+                                     'nom': _nom,
+                                     'TypeCompte': 'stagiaire',
+                                     'photoProfil': 'utilisateur/defaultProfil.webp',
+                                   });
                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Inscription reussie')));
                                   } on FirebaseAuthException catch (e) {
                                     if (e.code == 'weak-password') {

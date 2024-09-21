@@ -2,10 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:premierepage/main.dart';
-import 'package:premierepage/src/features/elaborer_demande/view/nav_bar.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/specialite.dart';
 import 'package:premierepage/src/features/gerer_compte/view/gererComptes.dart';
+import 'package:premierepage/src/features/gerer_compte/view/profilAdmin.dart';
 import 'package:premierepage/src/features/signup/views/suivant.dart';
 
 void main() {
@@ -24,23 +23,8 @@ class _connectState extends State<connect> {
   final Formkey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  final String predefinedEmail = "AD";
-  final String predefinedPassword = "A";
-  void _validateAndNavigate() {
-    if (Formkey.currentState!.validate()) {
-      //verifie si les entrées du user correspondent aux donnees prédéfinies
-      if (emailController.text == predefinedEmail &&
-          passwordController.text == predefinedPassword) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GererComptes(), // transmission des données
-          ),
-        );
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +55,15 @@ class _connectState extends State<connect> {
         Icon(
           Icons.computer_outlined,
           color: Colors.white,
-          size: 110,
+          size: 90,
         ),
+        Text(
+          'Connectez-vous',
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 19,
+              color: Colors.deepOrangeAccent),
+        )
       ]),
     );
   }
@@ -162,12 +153,11 @@ class _connectState extends State<connect> {
                             width: 150,
                             child: ElevatedButton(
                               onPressed: () async {
-                                _validateAndNavigate;
                                 FocusScope.of(context)
                                     .requestFocus(FocusNode());
                                 if (Formkey.currentState!.validate()) {
-                                  String _email = emailController.text;
-                                  String _mdp = passwordController.text;
+                                  String _email = emailController.text.trim();
+                                  String _mdp = passwordController.text.trim();
                                   try {
                                     final credential = await FirebaseAuth
                                         .instance
@@ -175,16 +165,45 @@ class _connectState extends State<connect> {
                                       email: _email,
                                       password: _mdp,
                                     );
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text('connexion réussi')));
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => specialite(),
-                                      ),
-                                    );
-                                  } on FirebaseAuthException catch (e) {
+                                   /* // recupere l'uid de l'utilisateur courant
+                                    String? curretUid = credential.user?.uid;
+                                    //ajouter a firestore
+                                    _firestore.collection("utilisateur").doc(curretUid).set({
+                                      "typeCompte":"staggiaire",
+                                      "photoProfil":"utilisateur/defaultProfil.webp"
+                                    })
+                                    ;*/
+                                    //recupérons le doc selon le user
+                                    DocumentSnapshot userDoc = await _firestore
+                                        .collection('utilisateur')
+                                        .doc(credential.user!.uid)
+                                        .get();
+                                    if (userDoc.exists) {
+                                      String role = userDoc['typeCompte'];
+                                      //redirection basée sur le role
+                                      if (role == 'Administrat') {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                                content: Text('connecté !')));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfilConnect()));
+                                      }
+                                    }else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  'connexion réussi')));
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => specialite(),
+                                        ),
+                                      );
+                                    } } on FirebaseAuthException catch (e) {
                                     if (e.code == 'invalid-credential') {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
@@ -199,20 +218,6 @@ class _connectState extends State<connect> {
                                   }
                                 }
                               },
-
-                              //   Navigator.push(context, MaterialPageRoute(builder: (context)=>navBar()));
-                              /* final email1 = emailController.text;
-      final password1 = passwordController.text;
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('envoi en cours ....'))
-        );
-        FocusScope.of(context).requestFocus(FocusNode());
-
-        //ajout dans la bd
-      CollectionReference conRef = FirebaseFirestore.instance.collection("connect");
-      conRef.add({
-        'email': email1,
-        'password': password1,*/
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10)),

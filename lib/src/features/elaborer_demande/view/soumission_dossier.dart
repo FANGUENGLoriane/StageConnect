@@ -1,4 +1,6 @@
+import 'dart:ffi';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -70,12 +72,13 @@ class _FilePickerScreenState extends State<FilePickerScreen> {
           setState(() {
             // Mise à jour de la barre de progression
             uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) / filesCount + (i / filesCount);
+
           });
         });
-
         // Attente que le fichier soit complètement téléchargé
         await task.whenComplete(() => null);
       }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Tous les fichiers ont été téléchargés avec succès !")),
       );

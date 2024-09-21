@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:premierepage/sansCompte.dart';
 import 'package:premierepage/src/constant/images.dart';
 import 'package:premierepage/src/constant/size.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/nav_bar.dart';
+import 'package:premierepage/src/features/gerer_compte/view/AdminConnect2.dart';
 
 Color _mainColor = Colors.deepOrangeAccent;
 const _secondColor = Colors.white;
@@ -58,8 +58,9 @@ class HomeLoginPage extends StatelessWidget {
                   width: double.infinity,
                 child:
                 TextButton(
+
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>sansCompte()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminProfilePage()));
                     },
                   style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(

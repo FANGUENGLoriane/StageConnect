@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:premierepage/src/features/authentification/view/home_login.dart';
 import 'package:premierepage/src/features/gerer_compte/view/gererComptes.dart';
+import 'package:premierepage/src/features/gerer_compte/view/profilAdmin.dart';
 import 'package:premierepage/src/features/home/views/home.dart';
 import 'package:premierepage/src/features/signup/views/suivant.dart';
 import 'firebase_options.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomePage(),
     );

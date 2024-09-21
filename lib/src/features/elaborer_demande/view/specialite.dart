@@ -22,9 +22,10 @@ class specialite extends StatefulWidget {
 class _specialiteState extends State<specialite> {
   Widget movies(String name,String image, String movie){
     return Padding(padding: EdgeInsets.all(5.0),
+
     child: ListTile(
       leading: CircleAvatar(
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.deepOrangeAccent,
         foregroundColor: Colors.white,
         backgroundImage: AssetImage(image),
         radius: 30,

@@ -6,6 +6,7 @@ const comptia = "assets/image/Comptia.jpg";
 const eccouncil = "assets/image/eccouncil.png";
 const microsoft= "assets/image/microsoft.jpeg";
 const logo_stage= "assets/image/logoperso1.png";
+const IA = "assets/image/IA.webp";
 
 const cisco1 = "assets/image/Cisco1.jpg";
 const formation= "assets/image/formation.jpg";
