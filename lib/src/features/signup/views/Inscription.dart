@@ -1,11 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:premierepage/main.dart';
 import 'package:premierepage/src/constant/images.dart';
 import 'package:premierepage/src/features/authentification/view/connexion.dart';
-import 'package:premierepage/src/features/elaborer_demande/view/nav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
@@ -204,19 +201,21 @@ class _SuivantState extends State<Suivant> {
                                     String? currentUid = credential.user?.uid;
                                     //ajout a la bd
                                    _firestore.collection('utilisateur').doc(currentUid).set({
+                                     'uid': currentUid,
                                      'nom': _nom,
-                                     'TypeCompte': 'stagiaire',
-                                     'photoProfil': 'utilisateur/defaultProfil.webp',
+                                     'typeCompte': 'stagiaire',
+                                     //'photoProfil': 'utilisateur/defaultProfil.webp',
                                    });
                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Inscription reussie')));
                                   } on FirebaseAuthException catch (e) {
+
                                     if (e.code == 'weak-password') {
                                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Le mot de passe est faible')));
                                     } else if (e.code == 'email-already-in-use') {
                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>connect()));
                                     }
                                     else if (e.code == 'invalid-email') {
-                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('L\'adresse mail est invalide')));
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('L\'adresse mail est invalid')));
                                     }
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text(e.toString())));

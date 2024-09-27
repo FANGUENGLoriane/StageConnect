@@ -9,17 +9,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:premierepage/src/constant/size.dart';
 import 'package:premierepage/src/features/gerer_compte/view/gererComptes.dart';
 import 'package:premierepage/src/features/gerer_compte/view/profilAdmin.dart';
-class AdminProfilePage extends StatefulWidget {
-  const AdminProfilePage({super.key});
+class EncadrantProfilePage extends StatefulWidget {
+  const EncadrantProfilePage({super.key});
 
   @override
-  State<AdminProfilePage> createState() => _AdminProfilePageState();
+  State<EncadrantProfilePage> createState() => _EncadrantProfilePageState();
 }
-class _AdminProfilePageState extends State<AdminProfilePage> {
+class _EncadrantProfilePageState extends State<EncadrantProfilePage> {
 
   final TextEditingController nameController = TextEditingController();
   File? _image;
-  bool _isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> _pickImage() async {
@@ -33,7 +32,7 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
 
   Future<String?> _uploadImageToFirebase(File imageFile) async {
     try {
-      String fileName = 'photoProfil/${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
+      String fileName = 'photoProfilEncadrant/${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
       Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(fileName);
       UploadTask uploadTask = firebaseStorageRef.putFile(imageFile);
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => {});
@@ -51,14 +50,14 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
       if (user != null) {
         await FirebaseFirestore.instance.collection('utilisateur').doc(user.uid).set({
           'name': name,
-          'photoProfil':imageUrl,
+          'photoProfilEncadrant':imageUrl,
           'created_at': FieldValue.serverTimestamp(),
-          'typeCompte': 'Administrat'
+          'typeCompte': 'Encadrant'
         });
         // Une fois les informations sauvegardées, rediriger vers la page principale
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AdminMainPage(profilePicture: imageUrl)),
+          MaterialPageRoute(builder: (context) => EncadrantMainPage(profilePicture2: imageUrl)),
         );
       }
     } catch (e) {
@@ -69,10 +68,6 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
   void saveProfile() async {
     String name = nameController.text;
     if (name.isNotEmpty && _image != null) {
-      setState(() {
-        _isLoading = true;
-      });
-
       String? imageUrl = await _uploadImageToFirebase(_image!);
 
       if (imageUrl != null) {
@@ -82,9 +77,6 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
         print('Erreur lors de l\'upload de l\'image');
       }
 
-      setState(() {
-        _isLoading = false;
-      });
     } else {
       print('Complétez toutes les informations');
     }
@@ -94,9 +86,8 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Compléter le Profil')),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Padding(
+      body:
+       Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -128,19 +119,19 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
 }
 
 
-class AdminMainPage extends StatefulWidget {
-  final String profilePicture;
+class EncadrantMainPage extends StatefulWidget {
+  final String profilePicture2;
 
-  AdminMainPage({required this.profilePicture});
+  EncadrantMainPage({required this.profilePicture2});
 
   @override
-  _AdminMainPageState createState() => _AdminMainPageState();
+  _EncadrantMainPageState createState() => _EncadrantMainPageState();
 }
 
-class _AdminMainPageState extends State<AdminMainPage> {
+class _EncadrantMainPageState extends State<EncadrantMainPage> {
   File? _newImage;
   bool _isLoading = false;
-  String? _updatedProfilePicture;
+  String? _updatedProfilePicture2;
 
   // Fonction pour choisir une nouvelle image depuis la galerie
   Future<void> _pickImage() async {
@@ -160,7 +151,7 @@ class _AdminMainPageState extends State<AdminMainPage> {
     });
 
     try {
-      String fileName = 'photoProfil/${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
+      String fileName = 'photoProfilEncadrant/${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
       Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(fileName);
       UploadTask uploadTask = firebaseStorageRef.putFile(_newImage!);
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => {});
@@ -169,7 +160,7 @@ class _AdminMainPageState extends State<AdminMainPage> {
       // Mettre à jour Firestore avec la nouvelle photo de profil
       await _updateProfilePictureInFirestore(newDownloadUrl);
       setState(() {
-        _updatedProfilePicture = newDownloadUrl;
+        _updatedProfilePicture2 = newDownloadUrl;
       });
     } catch (e) {
       print("Erreur lors de la mise à jour de la photo : $e");
@@ -185,61 +176,50 @@ class _AdminMainPageState extends State<AdminMainPage> {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       await FirebaseFirestore.instance.collection('utilisateur').doc(user.uid).update({
-        'photoProfil': newImageUrl,
+        'photoProfilEncadrant': newImageUrl,
       });
     }
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:
-      Center(
-        child:
-      Text('BIENVENUE',style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 25, color: Colors.deepOrangeAccent),),),),
-      body: Column(
-        children: [
-          SizedBox(height: 59,),
-          Text('Modifiez votre profil si besoin',style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 25),),
-          SizedBox(height: 110,),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                GestureDetector(
-                  onTap: _pickImage,
-                  // Lorsque l'avatar est cliqué, l'utilisateur peut choisir une nouvelle image
-                  child: CircleAvatar(
-                    radius: 70,
-                    backgroundImage: _updatedProfilePicture != null
-                        ? NetworkImage(_updatedProfilePicture!)
-                        : NetworkImage(widget.profilePicture),
-                    child: _isLoading ? CircularProgressIndicator() : null,
-                  ),
-                ),
-                SizedBox(height: 30),
-                Text('Bienvenue, Administrateur !'),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    // Rediriger vers les fonctionnalités de l'administrateur
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => GererComptes()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepOrangeAccent ,
-                    shape: RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.circular(borderRadius)),
-                  ),
-                  child: Text('Continuer', style: GoogleFonts.roboto(color: Colors.white),),
-                ),
-              ],
+      appBar: AppBar(title: Text('BIENVENU')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: _pickImage,
+              // Lorsque l'avatar est cliqué, l'utilisateur peut choisir une nouvelle image
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: _updatedProfilePicture2 != null
+                    ? NetworkImage(_updatedProfilePicture2!)
+                    : NetworkImage(widget.profilePicture2),
+                child: _isLoading ? CircularProgressIndicator() : null,
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 30),
+            Text('Vous etes connectez en tant que Encadrant !'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Rediriger vers les fonctionnalités de l'administrateur
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => GererComptes()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrangeAccent ,
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.circular(borderRadius)),
+              ),
+              child: Text('Continuer', style: GoogleFonts.roboto(color: Colors.white),),
+            ),
+          ],
+        ),
       ),
     );
   }}

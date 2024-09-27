@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:premierepage/main.dart';
+import 'package:premierepage/src/features/authentification/view/connexion.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/nav_bar.dart';
+import 'package:premierepage/src/features/gerer_compte/view/gererComptes.dart';
 
 void main() {
   runApp(const ajouStagiaire());
@@ -22,6 +25,7 @@ class _ajouStagiaireState extends State<ajouStagiaire> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController nomController = TextEditingController();
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
   void dispose() {
     super.dispose();
@@ -64,7 +68,7 @@ class _ajouStagiaireState extends State<ajouStagiaire> {
           size: 110,
         ),
         Text(
-          'Inscrivez-vous',
+          'Inscription',
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 19,
@@ -99,7 +103,7 @@ class _ajouStagiaireState extends State<ajouStagiaire> {
                 height: 13,
               ),
               Text(
-         'Un Stagiaire',
+                'Un Stagiaire',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
@@ -118,7 +122,7 @@ class _ajouStagiaireState extends State<ajouStagiaire> {
                             keyboardType: TextInputType.name,
                             decoration: const InputDecoration(
                                 label: Text(
-                                  'Nom',
+                                  'Nom du stagiare',
                                   style: TextStyle(fontSize: 20),
                                 ),
                                 hintText: 'veuillez entrer votre nom',
@@ -137,7 +141,7 @@ class _ajouStagiaireState extends State<ajouStagiaire> {
                         SizedBox(
                             width: 360,
                             child: TextFormField(
-                              // key: formkey,
+                                // key: formkey,
                                 controller: emailController,
                                 keyboardType: TextInputType.emailAddress,
                                 decoration: const InputDecoration(
@@ -145,7 +149,7 @@ class _ajouStagiaireState extends State<ajouStagiaire> {
                                       'Email',
                                       style: TextStyle(fontSize: 20),
                                     ),
-                                    hintText: 'veuillez entrer votre email',
+                                    hintText: ' email',
                                     prefixIcon: Icon(Icons.email),
                                     border: OutlineInputBorder()),
                                 validator: (value) {
@@ -160,7 +164,7 @@ class _ajouStagiaireState extends State<ajouStagiaire> {
                         SizedBox(
                             width: 360,
                             child: TextFormField(
-                              // key: formkey,
+                                // key: formkey,
                                 controller: passwordController,
                                 keyboardType: TextInputType.visiblePassword,
                                 decoration: const InputDecoration(
@@ -168,7 +172,7 @@ class _ajouStagiaireState extends State<ajouStagiaire> {
                                       'Password',
                                       style: TextStyle(fontSize: 20),
                                     ),
-                                    hintText: 'veuillez entrer votre password',
+                                    hintText: 'password',
                                     prefixIcon: Icon(Icons.password),
                                     border: OutlineInputBorder()),
                                 validator: (value) {
@@ -182,37 +186,62 @@ class _ajouStagiaireState extends State<ajouStagiaire> {
                             style: const ButtonStyle(
                                 backgroundColor: MaterialStatePropertyAll(
                                     Colors.deepOrangeAccent)),
-                            onPressed: () {
-                              if (formkey.currentState!.validate()) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => navBar()));
-                              }
-
-                              final nom = nomController.text;
-                              final email = emailController.text;
-                              final password = passwordController.text;
-                              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('information erreones')));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('ajout en cours ....')));
+                            onPressed: () async {
                               FocusScope.of(context).requestFocus(FocusNode());
+                              if (formkey.currentState!.validate()) {
+                                String _mdp = passwordController.text;
+                                String _email = emailController.text;
+                                String _nom = nomController.text;
 
-                              //ajout dans la bd
-                              CollectionReference conRef = FirebaseFirestore
-                                  .instance
-                                  .collection("connect");
-                              conRef.add({
-                                'nom': nom,
-                                'email': email,
-                                'password': password,
-                              });
+                                try {
+                                  final credential = await FirebaseAuth.instance
+                                      .createUserWithEmailAndPassword(
+                                    email: _email,
+                                    password: _mdp,
+                                  );
+                                  String? currentUid = credential.user?.uid;
+                                  //ajout a la bd
+                                  _firestore
+                                      .collection('utilisateur')
+                                      .doc(currentUid)
+                                      .set({
+                                    'nom': _nom,
+                                    'uid': currentUid,
+                                    'typeCompte': 'stagiaire',
+                                    //'photoProfil': 'utilisateur/defaultProfil.webp',
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Ajouter avec succes')));
+                                } on FirebaseAuthException catch (e) {
+                                  if (e.code == 'weak-password') {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Le mot de passe est faible')));
+                                  } else if (e.code == 'email-already-in-use') {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => GererComptes()));
+                                  } else if (e.code == 'invalid-email') {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'L\'adresse mail est invalid')));
+                                  }
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.toString())));
+                                }
+                              }
+                              ;
                             },
                             child: Text(
                               'Ajouter',
                               style:
-                              TextStyle(color: Colors.white, fontSize: 20),
+                                  TextStyle(color: Colors.white, fontSize: 20),
                             )),
                         SizedBox(height: 15)
                       ])))

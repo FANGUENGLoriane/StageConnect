@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:premierepage/src/constant/images.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/VoirFichiers.dart';
+import 'package:premierepage/src/features/gerer_compte/view/listFiles.dart';
 
 class FilePickerScreen extends StatefulWidget {
   const FilePickerScreen({
@@ -67,6 +68,12 @@ class _FilePickerScreenState extends State<FilePickerScreen> {
         UploadTask task = FirebaseStorage.instance
             .ref('users/$uid/$fileName')
             .putFile(file);
+        FirebaseFirestore.instance.collection('Fichiers').add({
+          'file': file,
+          'upload_at': FieldValue.serverTimestamp(),
+          'nomFichier': fileName,
+        });
+        
 
         task.snapshotEvents.listen((TaskSnapshot snapshot) {
           setState(() {
@@ -196,8 +203,9 @@ class _FilePickerScreenState extends State<FilePickerScreen> {
                             ),
                               ),
                             TextButton(onPressed: (){
+                             // Test().essai();
                               Navigator.push(context, MaterialPageRoute(builder: (context)=>VoirFichiers()));
-                            }, child: Text('Voir'),)
+                            }, child: Text('Voir'),),
                        ]
                           ),
                       )

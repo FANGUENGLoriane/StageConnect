@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/specialite.dart';
-import 'package:premierepage/src/features/gerer_compte/view/gererComptes.dart';
 import 'package:premierepage/src/features/gerer_compte/view/profilAdmin.dart';
-import 'package:premierepage/src/features/signup/views/suivant.dart';
+import 'package:premierepage/src/features/signup/views/Inscription.dart';
 
 void main() {
   runApp(const connect());
@@ -24,8 +25,37 @@ class _connectState extends State<connect> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // Fonction pour récupérer le token FCM
+  /*Future<String?> getFCMToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    //mise a jour du token
+    messaging.onTokenRefresh.listen((newToken){
+      saveFCMTokenToFirestore();
+    });
+    String? token = await messaging.getToken();
+    return token;
+  }
 
+// Fonction pour enregistrer le token dans Firestore sous l'UID de l'utilisateur
+  Future<void> saveFCMTokenToFirestore() async {
 
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String? fcmToken = await getFCMToken();
+
+      if (fcmToken != null) {
+        await FirebaseFirestore.instance
+            .collection('utilisateur')
+            .doc(user.uid)        // Document avec l'UID de l'utilisateur
+            .set({
+          'fcmToken': fcmToken,
+        }, SetOptions(merge: true));  // merge: true permet de ne pas écraser d'autres champs
+      }
+    } else {
+      print('Utilisateur non connecté');
+    }
+  }
+*/
   @override
   Widget build(BuildContext context) {
     mediaSize = MediaQuery.of(context).size;
@@ -40,7 +70,7 @@ class _connectState extends State<connect> {
         body: Stack(
           children: [
             Positioned(top: 70, child: _buildTop()),
-            Positioned(bottom: 155, child: _buildBottom()),
+            Positioned(bottom: 125,left: 10,right: 10, child: _buildBottom()),
           ],
         ),
       ),
@@ -51,13 +81,19 @@ class _connectState extends State<connect> {
     return SizedBox(
 // centrer l'icone
       width: mediaSize.width,
-      child: const Column(mainAxisSize: MainAxisSize.min, children: [
-        Icon(
-          Icons.computer_outlined,
-          color: Colors.white,
-          size: 90,
-        ),
-        Text(
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        SizedBox(
+      height: 100,
+      child:
+        CircleAvatar(
+          child:  Icon(
+            Icons.person,
+            color: Colors.grey[400],
+            size: 40,
+          ),
+        ),),
+
+        const Text(
           'Connectez-vous',
           style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -80,192 +116,200 @@ class _connectState extends State<connect> {
                 bottomRight: Radius.circular(30),
               ),
             ),
-            child: Column(children: [
-              SizedBox(height: 15),
-              const Text(
-                'CONNECTEZ-VOUS',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 29,
-                    color: Colors.deepOrangeAccent),
-              ),
-              const SizedBox(
-                height: 9,
-              ),
-              const Text(
-                'Veuillez remplir ces champs',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.grey),
-              ),
-              SizedBox(
-                height: 32,
-              ),
-              SizedBox(
-                  width: 338,
-                  child: Form(
-                      key: Formkey,
-                      child: Column(children: [
-                        TextFormField(
-                            controller: emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: const InputDecoration(
-                                label: Text(
-                                  'Email',
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                hintText: 'veuillez entrer votre adresse email',
-                                prefixIcon: Icon(Icons.email),
-                                border: OutlineInputBorder()),
-                            onChanged: (String value) {},
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'veuillez remplir ce champs!';
-                              }
-                              return null;
-                            }),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        SizedBox(
-                            width: 360,
-                            child: TextFormField(
-                                // key: formkey,
-                                controller: passwordController,
-                                keyboardType: TextInputType.visiblePassword,
-                                decoration: const InputDecoration(
-                                    label: Text(
-                                      'Password',
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                    hintText: 'veuillez entrer votre password',
-                                    prefixIcon: Icon(Icons.password),
-                                    border: OutlineInputBorder()),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'veuillez remplir ce champs';
-                                  }
-                                  return null;
-                                })),
-                        SizedBox(height: 25),
-                        SizedBox(
-                            width: 150,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                FocusScope.of(context)
-                                    .requestFocus(FocusNode());
-                                if (Formkey.currentState!.validate()) {
-                                  String _email = emailController.text.trim();
-                                  String _mdp = passwordController.text.trim();
-                                  try {
-                                    final credential = await FirebaseAuth
-                                        .instance
-                                        .signInWithEmailAndPassword(
-                                      email: _email,
-                                      password: _mdp,
-                                    );
-                                   /* // recupere l'uid de l'utilisateur courant
-                                    String? curretUid = credential.user?.uid;
-                                    //ajouter a firestore
-                                    _firestore.collection("utilisateur").doc(curretUid).set({
-                                      "typeCompte":"staggiaire",
-                                      "photoProfil":"utilisateur/defaultProfil.webp"
-                                    })
-                                    ;*/
-                                    //recupérons le doc selon le user
-                                    DocumentSnapshot userDoc = await _firestore
-                                        .collection('utilisateur')
-                                        .doc(credential.user!.uid)
-                                        .get();
-                                    if (userDoc.exists) {
-                                      String role = userDoc['typeCompte'];
-                                      //redirection basée sur le role
-                                      if (role == 'Administrat') {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                                content: Text('connecté !')));
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ProfilConnect()));
-                                      }
-                                    }else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                          SnackBar(
-                                              content: Text(
-                                                  'connexion réussi')));
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => specialite(),
-                                        ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(children: [
+                SizedBox(height: 15),
+                const Text(
+                  'CONNECTEZ-VOUS',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 29,
+                      color: Colors.deepOrangeAccent),
+                ),
+                const SizedBox(
+                  height: 9,
+                ),
+                const Text(
+                  'Veuillez remplir ces champs',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.grey),
+                ),
+                SizedBox(
+                  height: 32,
+                ),
+                SizedBox(
+                    width: 304,
+                    child: Form(
+                        key: Formkey,
+                        child: Column(children: [
+                          TextFormField(
+                              controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: const InputDecoration(
+                                  label: Text(
+                                    'Email',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  hintText: 'veuillez entrer votre adresse email',
+                                  prefixIcon: Icon(Icons.email),
+                                  border: OutlineInputBorder()),
+                              onChanged: (String value) {},
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'veuillez remplir ce champs!';
+                                }
+                                return null;
+                              }),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          SizedBox(
+                              width: 360,
+                              child: TextFormField(
+                                  // key: formkey,
+                                  controller: passwordController,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  decoration: const InputDecoration(
+                                      label: Text(
+                                        'Password',
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      hintText: 'veuillez entrer votre password',
+                                      prefixIcon: Icon(Icons.password),
+                                      border: OutlineInputBorder()),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'veuillez remplir ce champs';
+                                    }
+                                    return null;
+                                  })),
+                          SizedBox(height: 25),
+                          SizedBox(
+                              width: 150,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                  if (Formkey.currentState!.validate()) {
+                                    String _email = emailController.text.trim();
+                                    String _mdp = passwordController.text.trim();
+                                    try {
+                                      final credential = await FirebaseAuth
+                                          .instance
+                                          .signInWithEmailAndPassword(
+                                        email: _email,
+                                        password: _mdp,
                                       );
-                                    } } on FirebaseAuthException catch (e) {
-                                    if (e.code == 'invalid-credential') {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content:
-                                                  Text('Email incorrect')));
-                                    } else if (e.code == 'invalid-credential') {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content:
-                                                  Text('mot de passe érroné')));
+                                      // recupere l'uid de l'utilisateur courant
+                                      String? curretUid = credential.user?.uid;
+
+                                      //recupérons le doc selon le user
+                                      DocumentSnapshot userDoc = await _firestore
+                                          .collection('utilisateur')
+                                          .doc(credential.user!.uid)
+                                          .get();
+                                      if (userDoc.exists) {
+                                        String role = userDoc['typeCompte'];
+                                        //redirection basée sur le role
+                                        if (role == 'Administrat') {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content: Text('connecté !')));
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfilConnect()));
+                                        }else if (role == 'Encadrant'){
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content: Text('connecté !')));
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfilConnect()));
+                                        }
+                                      else {
+                                       // await saveFCMTokenToFirestore();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                            SnackBar(
+                                                content: Text(
+                                                    'connexion réussi')));
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => specialite(),
+                                          ),
+                                        );
+                                      }} } on FirebaseAuthException catch (e) {
+                                      if (e.code == 'invalid-credential') {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content:
+                                                    Text('Email incorrect')));
+                                      } else if (e.code == 'invalid-credential') {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content:
+                                                    Text('mot de passe érroné')));
+                                      }
                                     }
                                   }
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  elevation: 6,
-                                  backgroundColor: Colors.deepOrangeAccent,
-                                  minimumSize: const Size.fromHeight(40)),
-                              child: const Text(
-                                'Connexion',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 18),
-                              ),
-                            )),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        GestureDetector(
-                            onTap: () {}, child: Text('Mot de passe oublié ?')),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        SizedBox(
-                            width: 285,
-                            child: Row(
-                              children: [
-                                Text('vous n\'avez pas de compte?'),
-                                SizedBox(
-                                  width: 10,
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10)),
+                                    elevation: 6,
+                                    backgroundColor: Colors.deepOrangeAccent,
+                                    minimumSize: const Size.fromHeight(40)),
+                                child: const Text(
+                                  'Connexion',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Suivant()));
-                                  },
-                                  child: Text(
-                                    'inscrivez-vous',
-                                    style: GoogleFonts.roboto(
-                                        color: Colors.deepOrangeAccent),
+                              )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          GestureDetector(
+                              onTap: () {}, child: Text('Mot de passe oublié ?')),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                              width: 285,
+                              child: Row(
+                                children: [
+                                  Text('vous n\'avez pas de compte?'),
+                                  SizedBox(
+                                    width: 10,
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 18,
-                                ),
-                              ],
-                            ))
-                      ])))
-            ])));
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Suivant()));
+                                    },
+                                    child: Text(
+                                      'inscrivez-vous',
+                                      style: GoogleFonts.roboto(
+                                          color: Colors.deepOrangeAccent),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 28,
+                                  ),
+                                ],
+                              ))
+                        ])))
+              ]),
+            )));
   }
 }
 

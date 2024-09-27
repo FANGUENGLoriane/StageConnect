@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:premierepage/filepage.dart';
 import 'package:premierepage/main.dart';
+import 'package:premierepage/src/features/authentification/view/connexion.dart';
 
 
 void main() {
@@ -19,12 +21,13 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
   late Color myColor;
   late Size mediaSize;
   final Formkey = GlobalKey<FormState>();
-  final nomController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
   void dispose() {
     super.dispose();
-    nomController.dispose();
+    emailController.dispose();
     passwordController.dispose();
   }
 
@@ -58,7 +61,7 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
       width: mediaSize.width,
       child: const Column(mainAxisSize: MainAxisSize.min, children: [
         Icon(
-          Icons.computer_outlined,
+          Icons.person,
           color: Colors.white,
           size: 110,
         ),
@@ -106,14 +109,14 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
                       key: Formkey,
                       child: Column(children: [
                         TextFormField(
-                            controller: nomController,
+                            controller: emailController,
                             keyboardType: TextInputType.name,
                             decoration: const InputDecoration(
                                 label: Text(
-                                  'Nom',
+                                  'Email',
                                   style: TextStyle(fontSize: 20),
                                 ),
-                                hintText: 'veuillez entrer votre nom',
+                                hintText: 'Email de l\'encadrant',
                                 prefixIcon: Icon(Icons.person_2),
                                 border: OutlineInputBorder()),
                             onChanged: (String value) {},
@@ -137,7 +140,7 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
                                       'Password',
                                       style: TextStyle(fontSize: 20),
                                     ),
-                                    hintText: 'veuillez entrer votre password',
+                                    hintText: 'attribuez un mot de passe',
                                     prefixIcon: Icon(Icons.password),
                                     border: OutlineInputBorder()),
                                 validator: (value) {
@@ -150,25 +153,42 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
                         SizedBox(
                             width: 150,
                             child: ElevatedButton(
-                              onPressed:(){
-    if (Formkey.currentState!.validate()) {
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>FilesPag()));
-                              }
+                              onPressed:() async{
+                                FocusScope.of(context).requestFocus(FocusNode());
+                                if (Formkey.currentState!.validate()) {
+                                  String _mdp = passwordController.text;
+                                  String _email = emailController.text;
+
+                                  try {
+                                    final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                                      email: _email,
+                                      password: _mdp,
+
+                                    );
+                                    String? currentUid = credential.user?.uid;
+                                    //ajout a la bd
+                                    _firestore.collection('utilisateur').doc(currentUid).set({
+                                      'email': _email,
+                                      'typeCompte': 'Encadrant',
+                                      //'photoProfil': 'utilisateur/defaultProfil.webp',
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Encadrant ajouté avec succes')));
+                                  } on FirebaseAuthException catch (e) {
+
+                                    if (e.code == 'weak-password') {
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Le mot de passe est faible')));
+                                    } else if (e.code == 'email-already-in-use') {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>connect()));
+                                    }
+                                    else if (e.code == 'invalid-email') {
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('L\'adresse mail est invalid')));
+                                    }
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text(e.toString())));
+                                  }
+                                }
+
                               },
-
-                              //
-                              /* final email1 = emailController.text;
-      final password1 = passwordController.text;
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('envoi en cours ....'))
-        );
-        FocusScope.of(context).requestFocus(FocusNode());
-
-        //ajout dans la bd
-      CollectionReference conRef = FirebaseFirestore.instance.collection("connect");
-      conRef.add({
-        'email': email1,
-        'password': password1,*/
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10)),

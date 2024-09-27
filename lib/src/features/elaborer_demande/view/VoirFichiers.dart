@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 class VoirFichiers extends StatefulWidget {
   const VoirFichiers({super.key});
 
@@ -54,7 +55,7 @@ class _VoirFichiersState extends State<VoirFichiers> {
     return  Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepOrangeAccent,
-        title: Text('Vos fichiers importés'),
+        title: Text('Vos fichiers importés',style: GoogleFonts.roboto(color: Colors.white),)
       ),
       
       body:

@@ -39,7 +39,7 @@ class _dossierState extends State<dossier> {
               //  Image.asset('image/noir3.JPG'),
                 children: [
                 //  Image.asset('image/noir3.JPG'),
-                  Positioned(top: 70, child: _buildTop()),
+                  Positioned(top: 25, child: _buildTop()),
                   Positioned(bottom: 0, child: _buildBottom()),
                 ]
             )
@@ -72,7 +72,7 @@ class _dossierState extends State<dossier> {
                     color: Colors.white),
               ),
               Text(
-                'Demande de stage',
+                'Internship request',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -91,7 +91,7 @@ class _dossierState extends State<dossier> {
               ),
 
               Text(
-                'Photocopie du certificat de scolarité',
+                'Photocopy of the enrollment certificate',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -111,7 +111,7 @@ class _dossierState extends State<dossier> {
               ),
 
               Text(
-                'Photocopie de la CNI',
+                'Photocopy of the ID card',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -154,7 +154,7 @@ class _dossierState extends State<dossier> {
               ),
 
               Text(
-                'Quatre (4) Cartes photos',
+                'Four photo cards',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -175,7 +175,7 @@ class _dossierState extends State<dossier> {
               ),
 
               Text(
-                'Frais de stage : 25.000 FCFA',
+                'Intenship fees: 25.000 FCFA',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -195,7 +195,7 @@ Widget _buildTop() {
       Icon(
         Icons.info,
         color: Colors.white,
-        size: 70,
+        size: 60,
 
       ),
       Text(

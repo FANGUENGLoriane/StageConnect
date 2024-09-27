@@ -136,21 +136,21 @@ body:
           child: Text('Menu',style: TextStyle(fontSize: 25, color: Colors.white),),
         ),
         ListTile(
-          leading: const Icon(Icons.document_scanner),
+          leading: const Icon(Icons.edit_document),
           title: const Text('constitution dossier'),
           onTap: (){
             Navigator.push(context, MaterialPageRoute(builder: (context)=>const dossier()));
           },
         ),
         ListTile(
-          leading: const Icon(Icons.settings),
+          leading: const Icon(Icons.info),
           title: const Text('info'),
           onTap: (){
             Navigator.push(context, MaterialPageRoute(builder: (context)=> info()));
           },
         ),
         ListTile(
-          leading: const Icon(Icons.settings),
+          leading: const Icon(Icons.no_backpack),
           title: const Text('quiter'),
           onTap: () {
             Navigator.push(context,
@@ -158,7 +158,7 @@ body:
           },
         ),
         ListTile(
-          leading: const Icon(Icons.settings),
+          leading: const Icon(Icons.person),
           title: const Text('Deconnexion'),
           onTap: () {
             Navigator.push(context,

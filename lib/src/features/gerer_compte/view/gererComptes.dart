@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:premierepage/filepage.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:premierepage/src/constant/images.dart';
 import 'package:premierepage/src/features/gerer_compte/view/ajoutEncadrant.dart';
 import 'package:premierepage/src/features/gerer_compte/view/ajoutStagiaire.dart';
+import 'package:premierepage/src/features/gerer_compte/view/connectADMIN.dart';
+import 'package:premierepage/src/features/gerer_compte/view/gerer%20demandes.dart';
+
 
 class GererComptes extends StatefulWidget {
   const GererComptes({super.key});
@@ -39,10 +42,8 @@ class _GererComptesState extends State<GererComptes> {
                   ]),
                   centerTitle: true,
                   backgroundColor: Colors.deepOrangeAccent,
-                  title: Text(
-                    'GERER',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                  title:
+                  Text('GERER UTILISATEURS',style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white),),
                 ),
                 body: TabBarView(
                   children: [
@@ -60,6 +61,7 @@ class _GererComptesState extends State<GererComptes> {
                             ))),
                            Padding(
                              padding: EdgeInsets.symmetric( horizontal: 30,vertical: 25),
+
                              child:
                                  GestureDetector(
                                    onTap: (){
@@ -68,7 +70,6 @@ class _GererComptesState extends State<GererComptes> {
                                child: Text('Ajouter Stagiaire',style: TextStyle(fontSize: 25,color: Colors.black),),
                              ),),
         Divider(height: 10,),
-
         Padding(
             padding: EdgeInsets.symmetric( horizontal: 30,vertical: 100),
                            child:

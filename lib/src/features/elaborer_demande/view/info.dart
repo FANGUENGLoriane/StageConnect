@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/elementdossier.dart';
 
 class info extends StatefulWidget {
@@ -14,6 +15,7 @@ class _infoState extends State<info> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.deepOrangeAccent,
+          title: Text('Infos', style: GoogleFonts.roboto(color: Colors.white),),
         ),
         body: Center(
           child:  Column(

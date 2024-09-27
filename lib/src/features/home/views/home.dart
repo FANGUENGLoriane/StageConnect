@@ -7,8 +7,10 @@ import 'package:premierepage/src/constant/images.dart';
 import 'package:premierepage/src/constant/size.dart';
 import 'package:premierepage/src/constant/string.dart';
 import 'package:premierepage/src/features/authentification/view/connexion.dart';
+import 'package:premierepage/src/features/gerer_compte/view/gerer%20demandes.dart';
+import 'package:premierepage/src/features/gerer_compte/view/listFiles.dart';
 import 'package:premierepage/src/features/home/controller/CardController.dart';
-import 'package:premierepage/src/features/signup/views/suivant.dart';
+import 'package:premierepage/src/features/signup/views/Inscription.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -308,166 +310,6 @@ class _HomePage1State extends State<HomePage1> {
                     }),
               ),
 
-
-
-
-          /*Center(
-              child: Text(
-            'Nos Formations',
-            style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold),
-          )),
-          const SizedBox(
-            height: 10,
-          ),
-
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  SizedBox(
-                      height: 268,
-                      width: 250,
-                      child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Column(
-                            children: [
-                              Image.asset(person),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      ' EN GOUVERNANCE IT ',
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(IT_gouvernanceDescF),
-                                    TextButton(
-                                        onPressed: _launchURL,
-                                        child: Text('visiter le site'))
-                                    //  Text(' ditent les compétences..')
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )),
-                  SizedBox(
-                      height: 268,
-                      width: 250,
-                      child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Column(
-                            children: [
-                              Image.asset(cisco1),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 6),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      ' CISCO',
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(CiscoDescF),
-                                    TextButton(
-                                        onPressed: _launchURL,
-                                        child: Text('visiter le site'))
-                                  ],
-                                ),
-                              ),
-                              // Text('vous aider a developper vos compét')
-                            ],
-                          ),
-                        ),
-                      )),
-                  SizedBox(
-                      height: 268,
-                      width: 250,
-                      child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Column(
-                            children: [
-                              Image.asset(formation),
-                              SizedBox(height: 2),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 6),
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      ' EN GESTION DE PROJET ',
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    const Text(ProjetDescF),
-                                    TextButton(
-                                        onPressed: _launchURL,
-                                        child: const Text('visiter le site'))
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      )),
-                  SizedBox(
-                      height: 268,
-                      width: 250,
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Column(
-                            children: [
-                              Image.asset(microsoft1),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      'MICROSOFT',
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    const Text(microsoftDescF),
-                                    TextButton(
-                                        onPressed: _launchURL,
-                                        child: const Text('visiter le site'))
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )),
-                ],
-              ),
-            ),
-          ),*/
-
           const SizedBox(
             height: 20,
           ),
@@ -576,8 +418,9 @@ class _HomePage1State extends State<HomePage1> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: OutlinedButton(
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => const Suivant()));
+                       /*Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => UserFilesPage(userUID: 'UidDuUser')));*/
+                        Test().essai();
                       },
                       style: OutlinedButton.styleFrom(
                           shape: RoundedRectangleBorder(
