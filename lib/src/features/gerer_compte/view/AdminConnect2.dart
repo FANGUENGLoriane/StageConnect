@@ -53,7 +53,7 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
           'name': name,
           'photoProfil':imageUrl,
           'created_at': FieldValue.serverTimestamp(),
-          'typeCompte': 'Administrat'
+          'typeCompte': 'Administrateur'
         });
         // Une fois les informations sauvegardées, rediriger vers la page principale
         Navigator.push(

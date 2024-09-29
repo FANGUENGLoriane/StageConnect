@@ -169,6 +169,7 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
                                     //ajout a la bd
                                     _firestore.collection('utilisateur').doc(currentUid).set({
                                       'email': _email,
+                                      'uid': currentUid,
                                       'typeCompte': 'Encadrant',
                                       //'photoProfil': 'utilisateur/defaultProfil.webp',
                                     });

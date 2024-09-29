@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 //import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:premierepage/src/features/chat/view/contacts.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/specialite.dart';
 import 'package:premierepage/src/features/gerer_compte/view/profilAdmin.dart';
 import 'package:premierepage/src/features/signup/views/Inscription.dart';
@@ -179,7 +180,9 @@ class _connectState extends State<connect> {
                                       ),
                                       hintText: 'veuillez entrer votre password',
                                       prefixIcon: Icon(Icons.password),
-                                      border: OutlineInputBorder()),
+                                      border: OutlineInputBorder()
+                                  ),
+                                  obscureText: true,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'veuillez remplir ce champs';
@@ -213,11 +216,13 @@ class _connectState extends State<connect> {
                                           .get();
                                       if (userDoc.exists) {
                                         String role = userDoc['typeCompte'];
+                                        String uid = userDoc['uid'];
                                         //redirection basée sur le role
-                                        if (role == 'Administrat') {
+                                        if (role == 'Administrateur' && uid == 'NNgns1HITtbqRGeY2q1AGGgeuT83') {
+                                         // 'uid': currentUid,
                                           ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
-                                                  content: Text('connecté !')));
+                                                  content: Text('Admin connecté !')));
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -226,12 +231,12 @@ class _connectState extends State<connect> {
                                         }else if (role == 'Encadrant'){
                                           ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
-                                                  content: Text('connecté !')));
+                                                  content: Text(' Encadrant connecté !')));
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      ProfilConnect()));
+                                                      chat()));
                                         }
                                       else {
                                        // await saveFCMTokenToFirestore();

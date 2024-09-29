@@ -202,6 +202,7 @@ class _SuivantState extends State<Suivant> {
                                     //ajout a la bd
                                    _firestore.collection('utilisateur').doc(currentUid).set({
                                      'uid': currentUid,
+                                     'email': _email,
                                      'nom': _nom,
                                      'typeCompte': 'stagiaire',
                                      //'photoProfil': 'utilisateur/defaultProfil.webp',

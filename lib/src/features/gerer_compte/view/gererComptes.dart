@@ -6,6 +6,7 @@ import 'package:premierepage/src/features/gerer_compte/view/ajoutEncadrant.dart'
 import 'package:premierepage/src/features/gerer_compte/view/ajoutStagiaire.dart';
 import 'package:premierepage/src/features/gerer_compte/view/connectADMIN.dart';
 import 'package:premierepage/src/features/gerer_compte/view/gerer%20demandes.dart';
+import 'package:premierepage/src/features/gerer_compte/view/listFiles.dart';
 
 
 class GererComptes extends StatefulWidget {
@@ -65,7 +66,8 @@ class _GererComptesState extends State<GererComptes> {
                              child:
                                  GestureDetector(
                                    onTap: (){
-                                     Navigator.push(context, MaterialPageRoute(builder: (context)=>ajouStagiaire()));
+                                    //  Navigator.push(context, MaterialPageRoute(builder: (context)=>ajouStagiaire()));
+                                     Test().essai();
                                    },
                                child: Text('Ajouter Stagiaire',style: TextStyle(fontSize: 25,color: Colors.black),),
                              ),),
@@ -79,7 +81,6 @@ class _GererComptesState extends State<GererComptes> {
                               },
                               child:
                             Text('Enregistrer Encadrant',style: TextStyle(fontSize: 25,color: Colors.black),),
-
                             ),
         ),
                           Divider(height: 160,),
