@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:premierepage/src/constant/images.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/VoirFichiers.dart';
-import 'package:premierepage/src/features/gerer_compte/view/listFiles.dart';
 
 class FilePickerScreen extends StatefulWidget {
   const FilePickerScreen({

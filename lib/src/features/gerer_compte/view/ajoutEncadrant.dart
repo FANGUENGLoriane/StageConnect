@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:premierepage/filepage.dart';
-import 'package:premierepage/main.dart';
 import 'package:premierepage/src/features/authentification/view/connexion.dart';
 
 
@@ -24,6 +22,7 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String _selectedRole= 'Encardant';
   @override
   void dispose() {
     super.dispose();
@@ -143,21 +142,39 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
                                     hintText: 'attribuez un mot de passe',
                                     prefixIcon: Icon(Icons.password),
                                     border: OutlineInputBorder()),
+                                obscureText: true,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'veuillez remplir ce champs';
                                   }
                                   return null;
                                 })),
-                        SizedBox(height: 25),
+                        SizedBox(height: 20),
+
+                        DropdownButton<String>(
+                          value: _selectedRole,
+                          items: <String>['encadrant', 'stagiaire'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value.toUpperCase()),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedRole = newValue!;
+                            });
+                          },
+                        ),
+                     SizedBox(height: 25),
                         SizedBox(
                             width: 150,
                             child: ElevatedButton(
                               onPressed:() async{
                                 FocusScope.of(context).requestFocus(FocusNode());
                                 if (Formkey.currentState!.validate()) {
-                                  String _mdp = passwordController.text;
-                                  String _email = emailController.text;
+                                  String _mdp = passwordController.text.trim();
+                                  String _email = emailController.text.trim();
+                                  String role = _selectedRole;
 
                                   try {
                                     final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -170,10 +187,12 @@ class _ajoutEncadrantState extends State<ajoutEncadrant> {
                                     _firestore.collection('utilisateur').doc(currentUid).set({
                                       'email': _email,
                                       'uid': currentUid,
-                                      'typeCompte': 'Encadrant',
+                                      'role': role,
+                                      'createdAt': FieldValue.serverTimestamp()
+
                                       //'photoProfil': 'utilisateur/defaultProfil.webp',
                                     });
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Encadrant ajouté avec succes')));
+                                    ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Utilisateur $role enregistré avec sucess')));
                                   } on FirebaseAuthException catch (e) {
 
                                     if (e.code == 'weak-password') {

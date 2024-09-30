@@ -25,7 +25,10 @@ class _connectState extends State<connect> {
   final Formkey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? _selectedRole;
+  final List<String> _roles = ['stagiaire', 'Encadrant', 'Administrateur'];
   // Fonction pour récupérer le token FCM
   /*Future<String?> getFCMToken() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -71,7 +74,7 @@ class _connectState extends State<connect> {
         body: Stack(
           children: [
             Positioned(top: 70, child: _buildTop()),
-            Positioned(bottom: 125,left: 10,right: 10, child: _buildBottom()),
+            Positioned(bottom: 125, left: 10, right: 10, child: _buildBottom()),
           ],
         ),
       ),
@@ -84,16 +87,15 @@ class _connectState extends State<connect> {
       width: mediaSize.width,
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         SizedBox(
-      height: 100,
-      child:
-        CircleAvatar(
-          child:  Icon(
-            Icons.person,
-            color: Colors.grey[400],
-            size: 40,
+          height: 100,
+          child: CircleAvatar(
+            child: Icon(
+              Icons.person,
+              color: Colors.grey[400],
+              size: 40,
+            ),
           ),
-        ),),
-
+        ),
         const Text(
           'Connectez-vous',
           style: TextStyle(
@@ -154,7 +156,8 @@ class _connectState extends State<connect> {
                                     'Email',
                                     style: TextStyle(fontSize: 20),
                                   ),
-                                  hintText: 'veuillez entrer votre adresse email',
+                                  hintText:
+                                      'veuillez entrer votre adresse email',
                                   prefixIcon: Icon(Icons.email),
                                   border: OutlineInputBorder()),
                               onChanged: (String value) {},
@@ -178,18 +181,36 @@ class _connectState extends State<connect> {
                                         'Password',
                                         style: TextStyle(fontSize: 20),
                                       ),
-                                      hintText: 'veuillez entrer votre password',
+                                      hintText:
+                                          'veuillez entrer votre password',
                                       prefixIcon: Icon(Icons.password),
-                                      border: OutlineInputBorder()
-                                  ),
+                                      border: OutlineInputBorder()),
                                   obscureText: true,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'veuillez remplir ce champs';
                                     }
                                     return null;
-                                  })),
-                          SizedBox(height: 25),
+                                  })
+                          ),
+                          SizedBox(height: 20),
+                          DropdownButton<String>(
+                            value: _selectedRole,
+                            hint: Text('Sélectionnez le type de compte'),
+                            items: _roles.map((String role) {
+                              return DropdownMenuItem<String>(
+                                value: role,
+                                child: Text(role),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedRole = newValue;
+                              });
+                            },
+                          ),
+                          SizedBox(height: 20),
+
                           SizedBox(
                               width: 150,
                               child: ElevatedButton(
@@ -207,15 +228,73 @@ class _connectState extends State<connect> {
                                         password: _mdp,
                                       );
                                       // recupere l'uid de l'utilisateur courant
-                                      String? curretUid = credential.user?.uid;
+                                       String? curretUid = credential.user?.uid;
+                                       String uid = credential.user!.uid;
+                                       DocumentSnapshot userDoc = await _firestore.collection('utilisateur').doc(uid).get();
+                                       String? typeCompte = userDoc['role'];
+                                       if (_selectedRole == 'Administrateur' && uid == 'NNgns1HITtbqRGeY2q1AGGgeuT83') {
+                                         //recupérons le doc selon le user
+                                         await _firestore
+                                             .collection('utilisateur')
+                                             .doc(credential.user!.uid)
+                                             .update({
+                                           'role': _selectedRole,
+                                         });
+                                         ScaffoldMessenger.of(context).showSnackBar(
+                                             SnackBar(
+                                                 content: Text('Admin connecté !')));
+                                         Navigator.push(
+                                             context,
+                                             MaterialPageRoute(
+                                                 builder: (context) =>
+                                                     ProfilConnect()));
+                                       }
+                                      // Rediriger vers la page correspondante selon le rôle
+                                    else  if (_selectedRole == 'stagiaire' && typeCompte == 'stagiaire') {
+                                    ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                            SnackBar(
+                                                content: Text(
+                                                    'connexion réussi')));
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => specialite(),
+                                          ),
+                                        );
+                                      } else if (_selectedRole == 'Encadrant' && typeCompte == 'Encadrant') {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                                content: Text(' Encadrant connecté !')));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    chat()));
+                                      } else  {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                                content: Text('Acces non autorisé')));
+                                      }
+                                    } on FirebaseAuthException catch (e) {
+                                      if (e.code == 'invalid-credential') {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content:
+                                                    Text('Email incorrect')));
+                                      } else if (e.code ==
+                                          'invalid-credential') {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'mot de passe érroné')));
+                                      }
+                                    }
+                                    /*catch (e) {
+    print('Erreur lors de la connexion : $e');*/
+                                  }
 
-                                      //recupérons le doc selon le user
-                                      DocumentSnapshot userDoc = await _firestore
-                                          .collection('utilisateur')
-                                          .doc(credential.user!.uid)
-                                          .get();
-                                      if (userDoc.exists) {
-                                        String role = userDoc['typeCompte'];
+                                  /*String role = userDoc['typeCompte'];
                                         String uid = userDoc['uid'];
                                         //redirection basée sur le role
                                         if (role == 'Administrateur' && uid == 'NNgns1HITtbqRGeY2q1AGGgeuT83') {
@@ -251,24 +330,12 @@ class _connectState extends State<connect> {
                                             builder: (context) => specialite(),
                                           ),
                                         );
-                                      }} } on FirebaseAuthException catch (e) {
-                                      if (e.code == 'invalid-credential') {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                                content:
-                                                    Text('Email incorrect')));
-                                      } else if (e.code == 'invalid-credential') {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                                content:
-                                                    Text('mot de passe érroné')));
-                                      }
-                                    }
-                                  }
+                                      }} */
                                 },
                                 style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10)),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
                                     elevation: 6,
                                     backgroundColor: Colors.deepOrangeAccent,
                                     minimumSize: const Size.fromHeight(40)),
@@ -282,7 +349,8 @@ class _connectState extends State<connect> {
                             height: 20,
                           ),
                           GestureDetector(
-                              onTap: () {}, child: Text('Mot de passe oublié ?')),
+                              onTap: () {},
+                              child: Text('Mot de passe oublié ?')),
                           SizedBox(
                             height: 20,
                           ),

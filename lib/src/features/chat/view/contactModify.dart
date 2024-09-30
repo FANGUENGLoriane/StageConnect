@@ -19,7 +19,7 @@ class Contactmodify extends StatelessWidget {
         child: Icon(Icons.person, color: Colors.white,),
       ),
       title: Text(userMail),
-      subtitle: Text(userUid),
+      subtitle: Text('.'),
 
     );
   }

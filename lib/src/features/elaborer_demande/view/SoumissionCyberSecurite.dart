@@ -4,9 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:premierepage/filepage.dart';
 import 'package:premierepage/src/constant/images.dart';
 import 'package:premierepage/src/features/elaborer_demande/view/VoirFichiers.dart';
 

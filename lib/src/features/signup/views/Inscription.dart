@@ -91,17 +91,18 @@ class _SuivantState extends State<Suivant> {
               const SizedBox(
                 height: 25,
               ),
-              const Text('WELCOME',
+              const Text(
+                'WELCOME',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 29,
-                    color: Colors.deepOrangeAccent
-                ),
+                    color: Colors.deepOrangeAccent),
               ),
               const SizedBox(
                 height: 13,
               ),
-              const Text('Veuillez remplir ces champs',
+              const Text(
+                'Veuillez remplir ces champs',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
@@ -172,10 +173,11 @@ class _SuivantState extends State<Suivant> {
                                         'Password',
                                         style: TextStyle(fontSize: 20),
                                       ),
-                                      hintText: 'veuillez entrer votre password',
+                                      hintText:
+                                          'veuillez entrer votre password',
                                       prefixIcon: Icon(Icons.password),
-
                                       border: OutlineInputBorder()),
+                                  obscureText: true,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'veuillez remplir ce champs';
@@ -188,52 +190,67 @@ class _SuivantState extends State<Suivant> {
                                   backgroundColor: MaterialStatePropertyAll(
                                       Colors.deepOrangeAccent)),
                               onPressed: () async {
-                                FocusScope.of(context).requestFocus(FocusNode());
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
                                 if (formkey.currentState!.validate()) {
                                   String _email = emailController.text;
                                   String _mdp = passwordController.text;
                                   String _nom = nomController.text;
                                   try {
-                                   final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                                    final credential = await FirebaseAuth
+                                        .instance
+                                        .createUserWithEmailAndPassword(
                                       email: _email,
                                       password: _mdp,
-                                   );
+                                    );
                                     String? currentUid = credential.user?.uid;
                                     //ajout a la bd
-                                   _firestore.collection('utilisateur').doc(currentUid).set({
-                                     'uid': currentUid,
-                                     'email': _email,
-                                     'nom': _nom,
-                                     'typeCompte': 'stagiaire',
-                                     //'photoProfil': 'utilisateur/defaultProfil.webp',
-                                   });
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Inscription reussie')));
+                                    _firestore
+                                        .collection('utilisateur')
+                                        .doc(currentUid)
+                                        .set({
+                                      'uid': currentUid,
+                                      'email': _email,
+                                      'nom': _nom,
+                                      'role': 'stagiaire',
+                                      //'photoProfil': 'utilisateur/defaultProfil.webp',
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text('Inscription reussie')));
                                   } on FirebaseAuthException catch (e) {
-
                                     if (e.code == 'weak-password') {
-                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Le mot de passe est faible')));
-                                    } else if (e.code == 'email-already-in-use') {
-                                     Navigator.push(context, MaterialPageRoute(builder: (context)=>connect()));
-                                    }
-                                    else if (e.code == 'invalid-email') {
-                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('L\'adresse mail est invalid')));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  'Le mot de passe est faible')));
+                                    } else if (e.code ==
+                                        'email-already-in-use') {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => connect()));
+                                    } else if (e.code == 'invalid-email') {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  'L\'adresse mail est invalid')));
                                     }
                                   } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text(e.toString())));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(e.toString())));
                                   }
                                 }
-
-                                },
-                              child: const Text('Inscription',
-                                style:
-                                    TextStyle(color: Colors.white, fontSize: 20),
+                              },
+                              child: const Text(
+                                'Inscription',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
                               )),
                           const SizedBox(height: 15)
-                        ]
-                    )
-                                 ),
-                  )
-           )
+                        ])),
+                  ))
             ])));
   }
 }
